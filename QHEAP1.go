@@ -15,8 +15,8 @@ type Command struct {
 
 type Heap []int
 
-func (heap Heap) Min() int {
-    return heap[0]
+func (heap *Heap) Min() int {
+    return (*heap)[0]
 }
 
 func (heap *Heap) Add(v int) {
@@ -30,13 +30,19 @@ func (heap *Heap) Add(v int) {
 }
 
 func (heap *Heap) Delete(v int) {
-    index := (*heap).IndexOf(v)
-    (*heap)[index] = (*heap)[(*heap).size() - 1]
-    *heap = (*heap)[:(*heap).size()-1]
-    heap.min_heapify(index)
+    index := (*heap).indexOf(v)
+    lastIndex := (*heap).size() - 1
+
+    (*heap)[index] = (*heap)[lastIndex]
+    *heap = (*heap)[:lastIndex]
+    heap.minHeapify(index)
 }
 
-func (heap *Heap) IndexOf(val int) int {
+func (heap *Heap) size() int {
+    return len(*heap)
+}
+
+func (heap *Heap) indexOf(val int) int {
     for i, _ := range *heap {
         if (*heap)[i] == val {
             return i
@@ -45,7 +51,7 @@ func (heap *Heap) IndexOf(val int) int {
     return -1
 }
 
-func (heap *Heap) min_heapify(index int) {
+func (heap *Heap) minHeapify(index int) {
     var smallest int
     l := left(index)
     r := right(index)
@@ -59,7 +65,7 @@ func (heap *Heap) min_heapify(index int) {
     }
     if smallest != index {
         (*heap)[index], (*heap)[smallest] = (*heap)[smallest], (*heap)[index]
-        heap.min_heapify(smallest)
+        heap.minHeapify(smallest)
     }
 }
 
@@ -78,10 +84,6 @@ func left(i int) int {
 
 func right(i int) int {
     return 2*i + 2
-}
-
-func (heap *Heap) size() int {
-    return len(*heap)
 }
 
 func parseCommand(cmd []string) Command {
