@@ -9,6 +9,8 @@
 #include <sstream>
 #include <vector>
 
+typedef std::unordered_map<std::string, std::string> Attributes;
+
 struct Query {
     std::string scope;
     std::string attribute;
@@ -45,7 +47,7 @@ public:
 class TagMap {
     const char END_SIGN = '/';
 
-    std::unordered_map<std::string, std::unordered_map<std::string, std::string>> mAttributes;
+    std::unordered_map<std::string, Attributes> mAttributes;
     TagStack mCurrentScope;
 
     void parseTag(std::string tag) {
@@ -59,7 +61,7 @@ class TagMap {
         std::string currentTag;
         stream >> currentTag;
 
-        std::unordered_map<std::string, std::string> attributes;
+        Attributes attributes;
         std::string attrName, attrVal;
         while (stream >> attrName) {
             stream >> attrVal;
@@ -82,7 +84,6 @@ class TagMap {
 
     std::string scope() const {
         return mCurrentScope.getAsString();
-        
     }
 
 public:
@@ -104,7 +105,7 @@ public:
     }
 };
 
-std::tuple<int, int> getNumOfLines() {
+auto getNumOfLines() {
     std::string firstLine;
     int numOfSrc, numOfQrs;
     std::getline(std::cin, firstLine);
